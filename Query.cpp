@@ -13,7 +13,16 @@ using namespace std;
 std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
 {
   regex words_regex("[\\w']+");
-  if(s == words_regex.str()) return std::shared_ptr<QueryBase>(new WordQuery(words_regex));
+  auto matchesRegex = sregex_iterator(s.begin(), s.end(), words_regex);
+  if(s == matchesRegex->str()) 
+        return std::shared_ptr<QueryBase>(new WordQuery(matchesRegex->str()));
+  
+  regex not_words_regex("NOT [\\w']+");
+  matchesRegex = sregex_iterator(s.begin(), s.end(), not_words_regex);
+  if(s == matchesRegex->str()){
+    // cout << matchesRegex->str();
+        return std::shared_ptr<QueryBase>(new NotQuery(matchesRegex->str().substr(4,matchesRegex->str().length())));
+  } 
   // if(s.equals(wo))
 }
 ////////////////////////////////////////////////////////////////////////////////
