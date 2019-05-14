@@ -23,6 +23,17 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
     // cout << matchesRegex->str();
         return std::shared_ptr<QueryBase>(new NotQuery(matchesRegex->str().substr(4,matchesRegex->str().length())));
   } 
+
+  regex and_words_regex("[\\w']+ AND [\\w']+");
+  matchesRegex = sregex_iterator(s.begin(), s.end(), and_words_regex);
+  if(s == matchesRegex->str()){
+    // cout << matchesRegex->str();
+        auto l = sregex_iterator(s.begin(), s.end(), words_regex);
+        auto r = sregex_iterator(s.begin(), s.end(), words_regex);
+        r++;// AND
+        r++;// second word
+        return std::shared_ptr<QueryBase>(new AndQuery(l->str(), r->str()));
+  } 
   // if(s.equals(wo))
 }
 ////////////////////////////////////////////////////////////////////////////////
