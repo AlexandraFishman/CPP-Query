@@ -45,6 +45,19 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
         r++;// second word
         return std::shared_ptr<QueryBase>(new OrQuery(l->str(), r->str()));
   }
+
+  regex n_words_regex("[\\w']+ [\\d]+ [\\w']+");
+  matchesRegex = sregex_iterator(s.begin(), s.end(), n_words_regex);
+  if(s == matchesRegex->str()){
+    // cout << matchesRegex->str();
+        auto l = sregex_iterator(s.begin(), s.end(), words_regex);
+        auto r = sregex_iterator(s.begin(), s.end(), words_regex);
+        r++;// n
+        r++;// second word
+        auto n = sregex_iterator(s.begin(), s.end(), words_regex);
+        n++;
+        return std::shared_ptr<QueryBase>(new NQuery(l->str(), r->str(), stoi(n->str())));
+  }
   // string errMsg = "‫‪Unrecognized‬‬ search";
   // return  std::shared_ptr<QueryBase>(new (‫‪Unrecognized‬‬ search));
   // if(s.equals(wo))
