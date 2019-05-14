@@ -33,7 +33,20 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
         r++;// AND
         r++;// second word
         return std::shared_ptr<QueryBase>(new AndQuery(l->str(), r->str()));
-  } 
+  }
+
+  regex or_words_regex("[\\w']+ OR [\\w']+");
+  matchesRegex = sregex_iterator(s.begin(), s.end(), or_words_regex);
+  if(s == matchesRegex->str()){
+    // cout << matchesRegex->str();
+        auto l = sregex_iterator(s.begin(), s.end(), words_regex);
+        auto r = sregex_iterator(s.begin(), s.end(), words_regex);
+        r++;// OR
+        r++;// second word
+        return std::shared_ptr<QueryBase>(new OrQuery(l->str(), r->str()));
+  }
+  // string errMsg = "‫‪Unrecognized‬‬ search";
+  // return  std::shared_ptr<QueryBase>(new (‫‪Unrecognized‬‬ search));
   // if(s.equals(wo))
 }
 ////////////////////////////////////////////////////////////////////////////////
