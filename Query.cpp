@@ -58,8 +58,8 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
         n++;
         return std::shared_ptr<QueryBase>(new NQuery(l->str(), r->str(), stoi(n->str())));
   }
-  // string errMsg = "‫‪Unrecognized‬‬ search";
-  // return  std::shared_ptr<QueryBase>(new (‫‪Unrecognized‬‬ search));
+  // QueryResult errMsg = "‫‪Unrecognized‬‬ search";
+  // return  std::shared_ptr<QueryBase>(new ("‫‪Unrecognized‬‬ search"));
   // if(s.equals(wo))
 }
 ////////////////////////////////////////////////////////////////////////////////
