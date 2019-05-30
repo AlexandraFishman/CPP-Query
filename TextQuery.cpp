@@ -1,3 +1,6 @@
+/* Alex Fishman 319451514 */
+/* Elad Motzny 204093694 */
+
 #include "TextQuery.h"
 #include <sstream>
 #include <string>
