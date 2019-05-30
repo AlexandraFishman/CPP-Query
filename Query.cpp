@@ -18,16 +18,16 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   //All of the required regex, now with considerations for tabs and spaces:
   regex words_regex("^\\s*([\\w']+)\\s*$");
   regex not_words_regex("^\\s*NOT\\s+([\\w']+)\\s*$");
-  regex and_words_regex("^\\s*([\\w']+)\\sAND\\s+([\\w']+)\\s*$");
-  regex or_words_regex("^\\s*([\\w']+)\\sOR\\s+([\\w']+)\\s*$");
+  regex and_words_regex("^\\s*([\\w']+)\\s+AND\\s+([\\w']+)\\s*$");
+  regex or_words_regex("^\\s*([\\w']+)\\s+OR\\s+([\\w']+)\\s*$");
   regex n_words_regex("^\\s*([\\w']+)\\s+([\\d]+)\\s+([\\w']+)\\s*$");
-  //word
+  //word WORKING
   if(regex_match(s,words_regex)){
-    //cout<<"word"<<endl;
+    //cout<<"word"<<endl; 
     auto matchesRegex = sregex_iterator(s.begin(), s.end(), words_regex);
     return std::shared_ptr<QueryBase>(new WordQuery(matchesRegex->str()));
   }
-  //not word
+  //not word WORKING
   else if(regex_match(s,not_words_regex)){
     //cout<<"not"<<endl;
     auto matchesRegex = sregex_iterator(s.begin(), s.end(), not_words_regex);
@@ -36,26 +36,21 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   //word and word
   else if(regex_match(s,and_words_regex)){
     //cout<<"and"<<endl;
-    auto matchesRegex = sregex_iterator(s.begin(), s.end(), and_words_regex);
-    auto l = sregex_iterator(s.begin(), s.end(), words_regex);
-    auto r = sregex_iterator(s.begin(), s.end(), words_regex);
-    r++;// AND
-    r++;// second word
-    return std::shared_ptr<QueryBase>(new AndQuery(l->str(), r->str()));
+    //used this for referance: https://en.cppreference.com/w/cpp/regex/regex_iterator
+    auto begin = sregex_iterator(s.begin(), s.end(), and_words_regex);
+    return shared_ptr<QueryBase>(new AndQuery((*begin)[1].str(), (*begin)[2].str()));
   }
   //word or word
   else if(regex_match(s,or_words_regex)){
     //cout<<"or"<<endl;
-    auto matchesRegex = sregex_iterator(s.begin(), s.end(), or_words_regex);
-    auto l = sregex_iterator(s.begin(), s.end(), words_regex);
-    auto r = sregex_iterator(s.begin(), s.end(), words_regex);
-    r++;// OR
-    r++;// second word
-    return std::shared_ptr<QueryBase>(new OrQuery(l->str(), r->str()));
+    //used this for referance: https://en.cppreference.com/w/cpp/regex/regex_iterator
+    auto begin = sregex_iterator(s.begin(), s.end(), or_words_regex);
+    return shared_ptr<QueryBase>(new OrQuery((*begin)[1].str(), (*begin)[2].str()));
   }
   //word n word
   else if(regex_match(s,n_words_regex)){
     //cout<<"n"<<endl;
+    //used this for referance: https://en.cppreference.com/w/cpp/regex/regex_iterator
     auto matchesRegex = sregex_iterator(s.begin(), s.end(), n_words_regex);
     auto l = sregex_iterator(s.begin(), s.end(), words_regex);
     auto r = sregex_iterator(s.begin(), s.end(), words_regex);
@@ -64,6 +59,9 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
     auto n = sregex_iterator(s.begin(), s.end(), words_regex);
     n++;
     return std::shared_ptr<QueryBase>(new NQuery(l->str(), r->str(), stoi(n->str())));
+    //auto begin = sregex_iterator(s.begin(), s.end(), n_words_regex);
+    //return std::shared_ptr<QueryBase>(new NQuery((*begin)[0].str(), (*begin)[2].str(), stoi((*begin)[1])));
+    
   }
   //Unrecognized search
   else{
