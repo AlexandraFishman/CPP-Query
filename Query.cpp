@@ -15,12 +15,12 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
 std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
 {
-  //All of the required regex:
-  regex words_regex("[\\w']+");
-  regex not_words_regex("NOT [\\w']+");
-  regex and_words_regex("[\\w']+ AND [\\w']+");
-  regex or_words_regex("[\\w']+ OR [\\w']+");
-  regex n_words_regex("[\\w']+ [\\d]+ [\\w']+");
+  //All of the required regex, now with considerations for tabs and spaces:
+  regex words_regex("^\\s*([\\w']+)\\s*$");
+  regex not_words_regex("^\\s*NOT\\s+([\\w']+)\\s*$");
+  regex and_words_regex("^\\s*([\\w']+)\\sAND\\s+([\\w']+)\\s*$");
+  regex or_words_regex("^\\s*([\\w']+)\\sOR\\s+([\\w']+)\\s*$");
+  regex n_words_regex("^\\s*([\\w']+)\\s+([\\d]+)\\s+([\\w']+)\\s*$");
   //word
   if(regex_match(s,words_regex)){
     //cout<<"word"<<endl;
