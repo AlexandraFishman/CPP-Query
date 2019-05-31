@@ -49,19 +49,17 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   }
   //word n word
   else if(regex_match(s,n_words_regex)){
-    //cout<<"n"<<endl;
-    //used this for referance: https://en.cppreference.com/w/cpp/regex/regex_iterator
-    auto matchesRegex = sregex_iterator(s.begin(), s.end(), n_words_regex);
-    auto l = sregex_iterator(s.begin(), s.end(), words_regex);
-    auto r = sregex_iterator(s.begin(), s.end(), words_regex);
-    r++;// n
-    r++;// second word
-    auto n = sregex_iterator(s.begin(), s.end(), words_regex);
-    n++;
-    return std::shared_ptr<QueryBase>(new NQuery(l->str(), r->str(), stoi(n->str())));
-    //auto begin = sregex_iterator(s.begin(), s.end(), n_words_regex);
-    //return std::shared_ptr<QueryBase>(new NQuery((*begin)[0].str(), (*begin)[2].str(), stoi((*begin)[1])));
-    
+    //used this for referance: https://en.cppreference.com/w/cpp/iterator/istream_iterator
+    //http://www.cplusplus.com/reference/sstream/istringstream/istringstream/
+    istringstream sStream(s);
+		vector<string> sVec((istream_iterator<string>(sStream)),istream_iterator<string>());
+    string first = sVec[0];
+    //cout << "first word: " << first << endl;
+    int n = stoi(sVec[1]);
+    //cout << "n: " << n << endl;
+    string second = sVec[2];
+    //cout << "second word: " << second << endl;
+    return shared_ptr<QueryBase>(new NQuery(first, second, n)); 
   }
   //Unrecognized search
   else{
